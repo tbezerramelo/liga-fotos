@@ -15,7 +15,9 @@
 </head>
 <body>
   <header class="topo">
-    <div class="marca">LIGA <span>Fotos</span></div>
+    <div class="marca"><div>LIGA <span>Pós-jogo</span></div>
+      <nav class="abas"><button data-aba="fotos" class="ativo">Fotos</button><button data-aba="video">Vídeo</button></nav>
+    </div>
     <div class="campos">
       <label>Atleta <input id="atleta" placeholder="MORATO" autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="characters"></label>
       <label>Data <input id="data" placeholder="DD_MM_AAAA" inputmode="numeric" autocomplete="off"></label>
@@ -24,23 +26,104 @@
     <div class="exemplo" id="exemplo"></div>
   </header>
 
-  <main>
-    <div class="acoes-topo">
-      <label class="botao primario grande">+ Escolher fotos
-        <input id="input-fotos" type="file" accept="image/*" multiple hidden>
-      </label>
-    </div>
-    <div class="marcar" id="marcar"></div>
-    <div id="lista" class="lista"></div>
-    <p id="vazio" class="vazio">Escolha as fotos da galeria. A ordem da lista é a numeração (separada por formato). Toque numa miniatura para ajustar o enquadramento.</p>
-  </main>
+  <!-- ===================================================== FOTOS -->
+  <section id="aba-fotos">
+    <main>
+      <div class="acoes-topo">
+        <label class="botao primario grande">+ Escolher fotos
+          <input id="input-fotos" type="file" accept="image/*" multiple hidden>
+        </label>
+      </div>
+      <div class="marcar" id="marcar"></div>
+      <div id="lista" class="lista"></div>
+      <p id="vazio" class="vazio">Escolha as fotos da galeria. A ordem da lista é a numeração (separada por formato). Toque numa miniatura para ajustar o enquadramento.</p>
+    </main>
+    <footer class="rodape">
+      <div id="contagem" class="contagem"></div>
+      <button id="btn-preparar" class="primario">Preparar fotos</button>
+    </footer>
+  </section>
 
-  <footer class="rodape">
-    <div id="contagem" class="contagem"></div>
-    <button id="btn-preparar" class="primario">Preparar fotos</button>
-  </footer>
+  <!-- ===================================================== VÍDEO -->
+  <section id="aba-video" hidden>
+    <main>
+      <div class="v-abrir">
+        <label class="botao grande" id="v-abrir-lab">Abrir vídeo
+          <input id="v-input" type="file" accept="video/*,.mp4,.mov,.m4v" hidden>
+        </label>
+        <div id="v-arquivo" class="sutil v-arquivo"></div>
+      </div>
+      <p id="v-vazio" class="vazio">Abra um vídeo da galeria, do WhatsApp ou do app Arquivos. Marque os lances com <b>[ Início</b> e <b>Fim ]</b>, depois ajuste o enquadramento arrastando a caixa no vídeo.</p>
 
-  <!-- editor -->
+      <div id="v-editor" hidden>
+        <div class="v-palco" id="v-palco">
+          <video id="v-player" playsinline preload="auto"></video>
+          <canvas id="v-overlay"></canvas>
+        </div>
+        <input id="v-scrub" type="range" min="0" max="1" step="0.01" value="0" class="v-scrub">
+        <div class="v-controles">
+          <button id="v-menos5">−5s</button>
+          <button id="v-menos1">−1q</button>
+          <button id="v-play" class="primario">▶︎</button>
+          <button id="v-mais1">+1q</button>
+          <button id="v-mais5">+5s</button>
+          <span id="v-tempo" class="v-tempo">0:00.0</span>
+        </div>
+        <div class="v-marcar">
+          <button id="v-ini">[ Início</button>
+          <button id="v-fim">Fim ]</button>
+          <span id="v-pend" class="sutil"></span>
+          <button id="v-add" class="primario" disabled>+ Lance</button>
+        </div>
+
+        <div class="v-fmts">
+          <span class="sutil">Caixa:</span>
+          <div id="v-ver" class="abas-fmt sem-fundo"></div>
+          <label class="check"><input type="checkbox" id="v-guias"> Guias</label>
+        </div>
+
+        <div id="v-enq" class="cartao v-enq" hidden>
+          <div class="cartao-topo">
+            <b id="v-enq-titulo"></b>
+            <select id="v-modo"><option value="manual">Manual (keyframes)</option><option value="fixo">Fixo</option></select>
+          </div>
+          <canvas id="v-tl" class="v-tl"></canvas>
+          <div class="v-linha">
+            <button id="v-kf-add">◆ Keyframe aqui</button>
+            <button id="v-kf-del">Apagar ◆</button>
+            <button id="v-kf-limpar">Limpar</button>
+          </div>
+          <div id="v-kf-status" class="sutil v-dica"></div>
+          <div class="v-linha">
+            <label class="v-zoom">Zoom <input id="v-zoom" type="range" min="1" max="3" step="0.01"> <span id="v-zoom-valor"></span></label>
+            <button id="v-centralizar">Centralizar</button>
+          </div>
+          <div class="v-linha">
+            <button id="v-ini-agora">Início = agora</button>
+            <button id="v-fim-agora">Fim = agora</button>
+            <label class="check"><input type="checkbox" id="v-so-comp"> Só no compilado</label>
+          </div>
+          <div class="v-linha">
+            <button id="v-tocar" class="primario">▶︎ Tocar lance</button>
+            <button id="v-previa">Prévia do corte</button>
+          </div>
+        </div>
+
+        <div id="v-lances" class="lista"></div>
+
+        <div class="cartao v-saida">
+          <div class="v-linha" id="v-saida-fmts"></div>
+          <label class="check"><input type="checkbox" id="v-compilado" checked> Compilado (todos os lances num vídeo só, na ordem da lista)</label>
+        </div>
+      </div>
+    </main>
+    <footer class="rodape">
+      <div id="v-contagem" class="contagem"></div>
+      <button id="v-exportar" class="primario" disabled>Exportar vídeos</button>
+    </footer>
+  </section>
+
+  <!-- editor de foto -->
   <div id="editor" class="tela" hidden>
     <div class="tela-topo">
       <button id="ed-anterior">‹</button>
@@ -59,25 +142,36 @@
     </div>
   </div>
 
+  <!-- prévia do corte de vídeo -->
+  <div id="v-prev" class="tela" hidden>
+    <div class="tela-topo">
+      <span id="v-prev-titulo" class="titulo"></span>
+      <button id="v-prev-fechar" class="primario">Fechar</button>
+    </div>
+    <div id="v-prev-formatos" class="abas-fmt"></div>
+    <div class="palco"><canvas id="v-prev-canvas"></canvas></div>
+  </div>
+
   <!-- salvar -->
   <div id="salvar" class="tela" hidden>
     <div class="tela-topo">
-      <span class="titulo">Fotos prontas</span>
+      <span class="titulo" id="salvar-titulo">Prontos</span>
       <button id="salvar-fechar">Fechar</button>
     </div>
     <div class="salvar-corpo">
-      <p class="sutil">Toque em cada botão e escolha <b>"Salvar Imagens"</b> (vai para a galeria, na ordem) ou <b>"Salvar em Arquivos"</b> (mantém os nomes).</p>
+      <p class="sutil" id="salvar-dica"></p>
       <div id="salvar-botoes" class="salvar-botoes"></div>
       <button id="salvar-zip" class="secundario">Baixar tudo em ZIP</button>
     </div>
   </div>
 
-  <div id="progresso" class="progresso" hidden><div class="caixa"><div class="trilho"><div class="enchimento"></div></div><span class="texto"></span></div></div>
+  <div id="progresso" class="progresso" hidden><div class="caixa"><div class="trilho"><div class="enchimento"></div></div><span class="texto"></span><button id="progresso-cancelar" hidden>Cancelar</button></div></div>
   <div id="toast" class="toast" hidden></div>
 
   <script src="config.js"></script>
   <script src="util.js"></script>
   <script src="zip.js"></script>
   <script src="app.js"></script>
+  <script src="video.js"></script>
 </body>
 </html>

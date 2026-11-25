@@ -25,7 +25,10 @@
   function atualizarExemplo() {
     const a = U.normalizarAtleta($("#atleta").value) || "ATLETA";
     const d = U.normalizarData($("#data").value) || "DD_MM_AAAA";
-    $("#exemplo").textContent = nomeArquivo({ atleta: a, data: d, padding: Number($("#padding").value) || 1 }, formatos[0], 1);
+    const pad = Number($("#padding").value) || 1;
+    $("#exemplo").textContent = localStorage.getItem("m.aba") === "video"
+      ? U.montarNome(CFG.nome.template, { N: 1, FORMATO: (CFG.video?.formatos?.[0]?.id || "REELS"), ATLETA: a, DATA: d }, pad) + ".mp4"
+      : nomeArquivo({ atleta: a, data: d, padding: pad }, formatos[0], 1);
     $("#data").classList.toggle("invalido", !U.normalizarData($("#data").value));
   }
 
@@ -163,9 +166,11 @@
   }
 
   /* ------------------------------------------------------------ progresso */
-  function progresso(fr, txt = "") {
+  function progresso(fr, txt = "", aoCancelar = null) {
     const el = $("#progresso");
-    if (fr == null) { el.hidden = true; return; }
+    const bc = $("#progresso-cancelar");
+    if (fr == null) { el.hidden = true; bc.hidden = true; bc.onclick = null; return; }
+    if (aoCancelar) { bc.hidden = false; bc.onclick = aoCancelar; }
     el.hidden = false;
     el.querySelector(".enchimento").style.width = Math.round(fr * 100) + "%";
     el.querySelector(".texto").textContent = txt;
@@ -234,26 +239,39 @@
   const assinatura = (c) => JSON.stringify([c, lista.map((f) => [f.id, f.formatos])]);
 
   function mostrarSalvar() {
+    const grupos = formatos.filter((f) => prontos.porFormato[f.id].length)
+      .map((f) => ({ rotulo: f.id, itens: prontos.porFormato[f.id], tipo: "image/jpeg" }));
+    telaSalvar({ titulo: "Fotos prontas", grupos, zip: prontos.todos, zipNome: `${prontos.pasta}.zip`, pasta: prontos.pasta,
+      dica: 'Toque em cada botão e escolha <b>"Salvar Imagens"</b> (vai para a galeria, na ordem) ou <b>"Salvar em Arquivos"</b> (mantém os nomes).' });
+  }
+
+  // Tela "prontos" genérica (fotos e vídeos): um botão por grupo, que abre a tela de compartilhar do iPhone
+  let zipAtual = null;
+  function telaSalvar({ titulo, dica, grupos, zip, zipNome, pasta }) {
+    $("#salvar-titulo").textContent = titulo;
+    $("#salvar-dica").innerHTML = dica;
+    zipAtual = { zip, zipNome };
     const caixa = $("#salvar-botoes");
     caixa.replaceChildren();
     const podeCompartilhar = !!(navigator.canShare && navigator.share);
-    for (const fmt of formatos) {
-      const itens = prontos.porFormato[fmt.id];
-      if (!itens.length) continue;
+    for (const g of grupos) {
       const b = document.createElement("button");
       b.className = "primario";
-      b.textContent = `Salvar ${itens.length} ${fmt.id}`;
+      const rotulo = g.texto || `Salvar ${g.itens.length} ${g.rotulo}`;
+      b.textContent = rotulo;
       b.onclick = async () => {
-        const arquivos = itens.map((x) => new File([x.blob], x.nome, { type: "image/jpeg" }));
+        const arquivos = g.itens.map((x) => new File([x.blob], x.nome, { type: g.tipo }));
         if (podeCompartilhar && navigator.canShare({ files: arquivos })) {
           try {
             await navigator.share({ files: arquivos });
-            b.classList.add("feito"); b.textContent = `✓ ${itens.length} ${fmt.id} enviados`;
+            b.classList.add("feito"); b.textContent = "✓ " + rotulo.replace(/^Salvar /, "");
           } catch (e) {
             if (e.name !== "AbortError") U.toast("Não deu para compartilhar: " + e.message, "erro");
           }
+        } else if (g.itens.length === 1) {
+          U.baixarBlob(g.itens[0].blob, g.itens[0].nome);
         } else {
-          U.baixarBlob(await Zip.criar(itens.map((x) => ({ nome: x.nome, blob: x.blob }))), `${prontos.pasta}_${fmt.id}.zip`);
+          U.baixarBlob(await Zip.criar(g.itens.map((x) => ({ nome: x.nome, blob: x.blob }))), `${pasta}_${g.rotulo}.zip`);
         }
       };
       caixa.appendChild(b);
@@ -420,6 +438,18 @@
     return { init, abrir };
   })();
 
+  function trocarAba(aba) {
+    for (const b of document.querySelectorAll(".abas button")) b.classList.toggle("ativo", b.dataset.aba === aba);
+    $("#aba-fotos").hidden = aba !== "fotos";
+    $("#aba-video").hidden = aba !== "video";
+    localStorage.setItem("m.aba", aba);
+    atualizarExemplo();
+    window.dispatchEvent(new CustomEvent("liga:aba", { detail: aba }));
+  }
+
+  // usado pela aba Vídeo (video.js)
+  window.LIGA = { campos, progresso, telaSalvar, aba: () => localStorage.getItem("m.aba") || "fotos" };
+
   /* ------------------------------------------------------------ init */
   function init() {
     const at = $("#atleta"), dt = $("#data"), pd = $("#padding");
@@ -448,7 +478,9 @@
 
     $("#btn-preparar").onclick = preparar;
     $("#salvar-fechar").onclick = () => ($("#salvar").hidden = true);
-    $("#salvar-zip").onclick = async () => { if (prontos) U.baixarBlob(await Zip.criar(prontos.todos), `${prontos.pasta}.zip`); };
+    $("#salvar-zip").onclick = async () => { if (zipAtual) U.baixarBlob(await Zip.criar(zipAtual.zip), zipAtual.zipNome); };
+    for (const b of document.querySelectorAll(".abas button")) b.onclick = () => trocarAba(b.dataset.aba);
+    trocarAba(localStorage.getItem("m.aba") || "fotos");
     window.addEventListener("beforeunload", (e) => { if (lista.length) { e.preventDefault(); e.returnValue = ""; } });
     Editor.init();
     atualizarExemplo();
