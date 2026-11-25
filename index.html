@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <title>LIGA Fotos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="LIGA Fotos">
+  <meta name="theme-color" content="#121315">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icone-180.png">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <header class="topo">
+    <div class="marca">LIGA <span>Fotos</span></div>
+    <div class="campos">
+      <label>Atleta <input id="atleta" placeholder="MORATO" autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="characters"></label>
+      <label>Data <input id="data" placeholder="DD_MM_AAAA" inputmode="numeric" autocomplete="off"></label>
+      <label>Nº <select id="padding"><option value="1">1_</option><option value="2">01_</option></select></label>
+    </div>
+    <div class="exemplo" id="exemplo"></div>
+  </header>
+
+  <main>
+    <div class="acoes-topo">
+      <label class="botao primario grande">+ Escolher fotos
+        <input id="input-fotos" type="file" accept="image/*" multiple hidden>
+      </label>
+    </div>
+    <div class="marcar" id="marcar"></div>
+    <div id="lista" class="lista"></div>
+    <p id="vazio" class="vazio">Escolha as fotos da galeria. A ordem da lista é a numeração (separada por formato). Toque numa miniatura para ajustar o enquadramento.</p>
+  </main>
+
+  <footer class="rodape">
+    <div id="contagem" class="contagem"></div>
+    <button id="btn-preparar" class="primario">Preparar fotos</button>
+  </footer>
+
+  <!-- editor -->
+  <div id="editor" class="tela" hidden>
+    <div class="tela-topo">
+      <button id="ed-anterior">‹</button>
+      <span id="ed-titulo" class="titulo"></span>
+      <button id="ed-proxima">›</button>
+      <button id="ed-fechar" class="primario">Pronto</button>
+    </div>
+    <div id="ed-formatos" class="abas-fmt"></div>
+    <div class="palco"><canvas id="ed-canvas"></canvas></div>
+    <div class="tela-base">
+      <label class="check"><input type="checkbox" id="ed-on"> <span id="ed-on-txt">Exportar</span></label>
+      <label class="check" id="ed-dividir-lab"><input type="checkbox" id="ed-dividir"> Dividir em 2</label>
+      <label class="check"><input type="checkbox" id="ed-guias"> Guias</label>
+      <button id="ed-centralizar">Centralizar</button>
+      <span id="ed-aviso" class="aviso"></span>
+    </div>
+  </div>
+
+  <!-- salvar -->
+  <div id="salvar" class="tela" hidden>
+    <div class="tela-topo">
+      <span class="titulo">Fotos prontas</span>
+      <button id="salvar-fechar">Fechar</button>
+    </div>
+    <div class="salvar-corpo">
+      <p class="sutil">Toque em cada botão e escolha <b>"Salvar Imagens"</b> (vai para a galeria, na ordem) ou <b>"Salvar em Arquivos"</b> (mantém os nomes).</p>
+      <div id="salvar-botoes" class="salvar-botoes"></div>
+      <button id="salvar-zip" class="secundario">Baixar tudo em ZIP</button>
+    </div>
+  </div>
+
+  <div id="progresso" class="progresso" hidden><div class="caixa"><div class="trilho"><div class="enchimento"></div></div><span class="texto"></span></div></div>
+  <div id="toast" class="toast" hidden></div>
+
+  <script src="config.js"></script>
+  <script src="util.js"></script>
+  <script src="zip.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

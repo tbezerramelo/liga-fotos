@@ -1,0 +1,90 @@
+:root {
+  --fundo: #121315; --painel: #1b1d20; --painel2: #24272b; --borda: #33373c;
+  --texto: #e8e9eb; --sutil: #8d939a; --destaque: #3d8bfd; --perigo: #e5484d; --ok: #30a46c; --aviso: #f5a524;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 16px; color-scheme: dark;
+  -webkit-text-size-adjust: 100%;
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; background: var(--fundo); color: var(--texto); }
+body { padding-bottom: calc(84px + env(safe-area-inset-bottom)); }
+[hidden] { display: none !important; }
+button, input, select, .botao { font: inherit; color: inherit; }
+button, .botao {
+  background: var(--painel2); border: 1px solid var(--borda); border-radius: 10px;
+  padding: 10px 14px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+}
+button.primario, .botao.primario { background: var(--destaque); border-color: var(--destaque); color: #fff; font-weight: 600; }
+button:disabled { opacity: .5; }
+.grande { width: 100%; font-size: 17px; }
+input, select { background: var(--fundo); border: 1px solid var(--borda); border-radius: 8px; padding: 8px; font-size: 16px; }
+input.invalido { border-color: var(--perigo); }
+.check { display: inline-flex; align-items: center; gap: 6px; }
+.check input { width: 20px; height: 20px; }
+.sutil { color: var(--sutil); }
+
+.topo {
+  position: sticky; top: 0; z-index: 5; background: var(--painel); border-bottom: 1px solid var(--borda);
+  padding: calc(8px + env(safe-area-inset-top)) 12px 8px;
+}
+.marca { font-weight: 800; margin-bottom: 6px; }
+.marca span { font-weight: 400; color: var(--sutil); }
+.campos { display: grid; grid-template-columns: 1.2fr 1fr auto; gap: 8px; }
+.campos label { display: flex; flex-direction: column; font-size: 12px; color: var(--sutil); gap: 2px; }
+.campos input { width: 100%; text-transform: uppercase; color: var(--texto); }
+.exemplo { font: 12px ui-monospace, Menlo, monospace; color: var(--sutil); margin-top: 6px; overflow-wrap: anywhere; }
+
+main { padding: 12px; display: flex; flex-direction: column; gap: 12px; }
+.marcar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; color: var(--sutil); font-size: 14px; }
+.marcar button { min-height: 36px; padding: 6px 12px; }
+.vazio { color: var(--sutil); text-align: center; padding: 24px 12px; border: 2px dashed var(--borda); border-radius: 12px; }
+
+.lista { display: flex; flex-direction: column; gap: 10px; }
+.cartao { background: var(--painel); border: 1px solid var(--borda); border-radius: 12px; padding: 10px; }
+.cartao-topo { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.pos { background: var(--painel2); border-radius: 6px; padding: 2px 8px; font-weight: 700; }
+.nome { flex: 1; font-size: 13px; color: var(--sutil); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cartao-topo button { min-height: 36px; min-width: 40px; padding: 4px 8px; }
+.previas { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 2px; align-items: flex-start; }
+.previa { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: none; }
+.previa canvas { display: block; border-radius: 6px; background: #000; outline: 1px solid var(--borda); }
+.previa.desligada canvas { opacity: .25; filter: grayscale(1); }
+.previa .check { font-size: 13px; font-weight: 600; }
+.previa .num { color: var(--destaque); }
+.previa .dividir { font-weight: 400; color: var(--sutil); font-size: 12px; }
+.previa .baixa { color: var(--aviso); font-size: 11px; font-weight: 600; }
+
+.rodape {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; background: var(--painel); border-top: 1px solid var(--borda);
+  padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); display: flex; gap: 10px; align-items: center;
+}
+.contagem { flex: 1; font-size: 13px; color: var(--sutil); }
+
+.tela { position: fixed; inset: 0; z-index: 20; background: #0b0c0d; display: flex; flex-direction: column; }
+.tela-topo, .tela-base { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: var(--painel); flex-wrap: wrap; }
+.tela-topo { padding-top: calc(8px + env(safe-area-inset-top)); }
+.tela-base { padding-bottom: calc(8px + env(safe-area-inset-bottom)); font-size: 14px; }
+.titulo { flex: 1; text-align: center; font-weight: 600; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.abas-fmt { display: flex; gap: 6px; padding: 6px 10px; background: var(--painel); overflow-x: auto; }
+.abas-fmt button { min-height: 36px; padding: 6px 12px; font-size: 14px; white-space: nowrap; }
+.abas-fmt button.ativo { background: var(--destaque); border-color: var(--destaque); color: #fff; }
+.abas-fmt button.desligado { opacity: .55; text-decoration: line-through; }
+.palco { flex: 1; position: relative; min-height: 0; }
+.palco canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; }
+.aviso { color: var(--aviso); font-size: 12px; width: 100%; }
+
+.salvar-corpo { padding: 16px; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; }
+.salvar-botoes { display: flex; flex-direction: column; gap: 10px; }
+.salvar-botoes button { width: 100%; font-size: 17px; }
+.salvar-botoes button.feito { background: var(--ok); border-color: var(--ok); }
+button.secundario { width: 100%; }
+
+.progresso { position: fixed; inset: 0; z-index: 30; background: rgba(0,0,0,.6); display: grid; place-items: center; }
+.progresso .caixa { background: var(--painel); border-radius: 12px; padding: 16px; width: 80%; display: flex; flex-direction: column; gap: 10px; }
+.trilho { height: 8px; background: var(--painel2); border-radius: 4px; overflow: hidden; }
+.enchimento { height: 100%; width: 0; background: var(--destaque); }
+.progresso .texto { font-size: 14px; color: var(--sutil); }
+.toast {
+  position: fixed; left: 12px; right: 12px; bottom: calc(90px + env(safe-area-inset-bottom)); z-index: 40;
+  background: var(--painel2); border: 1px solid var(--borda); border-radius: 12px; padding: 12px; font-size: 14px;
+}
+.toast.erro { border-color: var(--perigo); }
